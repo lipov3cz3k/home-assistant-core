@@ -182,6 +182,13 @@ class WebAuthnAuthModule(MultiFactorAuthModule):
         await self._async_load()
         return user_id in self._users  # type: ignore
 
+    async def async_is_supported(
+        self, user_id: str, user_input: dict[str, Any]
+    ) -> bool:
+        """Return True if browser supported."""
+        error = user_input.get(INPUT_FIELD_ERROR, None)
+        return error not in [INPUT_ERROR_UNSUPPORTED, INPUT_ERROR_PROTOCOL]
+
     async def async_validate(self, user_id: str, user_input: dict[str, Any]) -> bool:
         """Return True if validation passed."""
         await self._async_load()
@@ -211,7 +218,7 @@ class WebAuthnAuthModule(MultiFactorAuthModule):
                 signature,
             )
             return True
-        except ValueError:
+        except Exception:  # pylint: disable=broad-except
             return False
 
     async def async_get_login_mfa_additional_data(self, user_id: str) -> dict:
