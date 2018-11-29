@@ -498,6 +498,8 @@ async def websocket_current_user(
                     {
                         "id": module.id,
                         "name": module.name,
+                        "multiple": module.multiple,
+                        "count": await module.async_get_count(user.id),
                         "enabled": module.id in enabled_modules,
                     }
                     for module in hass.auth.auth_mfa_modules

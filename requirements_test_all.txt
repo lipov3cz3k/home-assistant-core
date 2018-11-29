@@ -505,6 +505,9 @@ feedparser==6.0.10
 # homeassistant.components.fibaro
 fiblary3==0.1.8
 
+# homeassistant.auth.mfa_modules.u2f
+fido2==0.4.0
+
 # homeassistant.components.file
 file-read-backwards==2.0.0
 

@@ -452,6 +452,7 @@ class FlowHandler:
         errors: dict[str, str] | None = None,
         description_placeholders: Mapping[str, str | None] | None = None,
         last_step: bool | None = None,
+        data: dict[str, Any] = None,
     ) -> FlowResult:
         """Return the definition of a form to gather user input."""
         return FlowResult(
@@ -463,6 +464,7 @@ class FlowHandler:
             errors=errors,
             description_placeholders=description_placeholders,
             last_step=last_step,  # Display next or submit button in frontend
+            data=data,
         )
 
     @callback
