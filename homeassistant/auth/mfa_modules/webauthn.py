@@ -22,7 +22,9 @@ from . import (
 # TODO: Tests
 # TODO: Проверить что работает при смене домена
 # REQUIREMENTS = ['fido2==0.4.0']
-REQUIREMENTS = ["https://github.com/Yubico/python-fido2.git#fido2==0.4.0"]
+REQUIREMENTS = [
+    "https://github.com/Yubico/python-fido2/archive/master.zip#fido2==0.4.1"
+]
 
 CONFIG_SCHEMA = MULTI_FACTOR_AUTH_MODULE_SCHEMA.extend({}, extra=vol.PREVENT_EXTRA)
 
@@ -125,7 +127,7 @@ class WebAuthnAuthModule(MultiFactorAuthModule):
             STORAGE_VERSION, STORAGE_KEY, private=True
         )
         self._server = None  # type: fido2.server.Fido2Server
-        self._challenge = None  # type: str
+        self._state = None  # type: dict
 
     @property
     def input_schema(self) -> vol.Schema:
@@ -193,29 +195,19 @@ class WebAuthnAuthModule(MultiFactorAuthModule):
         """Return True if validation passed."""
         await self._async_load()
         return await self.hass.async_add_executor_job(
-            self._validate_webauthn, user_id, user_input.get(INPUT_FIELD_TOKEN, "")
+            self._validate_webauthn, user_input.get(INPUT_FIELD_TOKEN, "")
         )
 
-    def _validate_webauthn(self, user_id: str, token: str) -> bool:
+    def _validate_webauthn(self, token: str) -> bool:
         """Validate token."""
         if not token:
             return False
 
-        credentials_encoded = self._users.get(user_id, None)
-        if credentials_encoded is None:
-            return False
-
         credential_id, client_data, auth_data, signature = _get_validate_data(token)
-        credentials = _decode_credentials(credentials_encoded)
 
         try:
             self._server.authenticate_complete(
-                credentials,
-                credential_id,
-                self._challenge,
-                client_data,
-                auth_data,
-                signature,
+                self._state, credential_id, client_data, auth_data, signature
             )
             return True
         except Exception:  # pylint: disable=broad-except
@@ -231,8 +223,8 @@ class WebAuthnAuthModule(MultiFactorAuthModule):
 
         credentials = _decode_credentials(credentials_encoded)
         self._server = _create_server(self.hass)
-        auth_data = self._server.authenticate_begin(credentials)
-        self._challenge = auth_data["publicKey"]["challenge"]
+        auth_data, state = self._server.authenticate_begin(credentials)
+        self._state = state
 
         return {"options": _encode_bytes_to_string(auth_data)}
 
@@ -252,7 +244,7 @@ class WebAuthnSetupFlow(SetupFlow):
         self._auth_module = auth_module  # type: WebAuthnAuthModule
         self._user = user  # type: User
         self._server = _create_server(auth_module.hass)
-        self._challenge = None  # type: str
+        self._state = None  # type: dict
         self._credentials = credentials  # type: list
         self._invalid_mfa_times = 0  # type: int
 
@@ -272,7 +264,7 @@ class WebAuthnSetupFlow(SetupFlow):
             try:
                 client_data, att_obj = _get_create_data(token)
                 auth_data = self._server.register_complete(
-                    self._challenge, client_data, att_obj
+                    self._state, client_data, att_obj
                 )
 
                 self._credentials.append(auth_data.credential_data)
@@ -296,7 +288,7 @@ class WebAuthnSetupFlow(SetupFlow):
             if self._invalid_mfa_times >= self._auth_module.MAX_RETRY_TIME:
                 return self.async_abort(reason="too_many_retry")
 
-        registration_data = self._server.register_begin(
+        registration_data, state = self._server.register_begin(
             {
                 "id": self._user_id.encode("utf-8"),
                 "name": self._user.name,
@@ -305,7 +297,7 @@ class WebAuthnSetupFlow(SetupFlow):
             self._credentials,
         )
 
-        self._challenge = registration_data["publicKey"]["challenge"]
+        self._state = state
         data = {"options": _encode_bytes_to_string(registration_data)}
 
         return self.async_show_form(
