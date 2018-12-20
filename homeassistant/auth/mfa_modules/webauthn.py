@@ -3,7 +3,6 @@ from __future__ import annotations
 
 import base64
 import logging
-import string
 from typing import Any
 
 import voluptuous as vol
@@ -20,8 +19,6 @@ from . import (
 
 # TODO: Update version after release
 # (and in requirements_all.txt and requirements_test_all.txt)
-# TODO: Tests
-# TODO: Проверить что работает при смене домена
 # REQUIREMENTS = ['fido2==0.4.0']
 REQUIREMENTS = [
     "https://github.com/Yubico/python-fido2/archive/master.zip#fido2==0.4.1"
@@ -51,11 +48,11 @@ def _create_server(hass: HomeAssistant) -> Any:
     from urllib.parse import urlparse
 
     parsed_uri = urlparse(hass.config.api.base_url)
-    rp = RelyingParty(parsed_uri.hostname)
-    return Fido2Server(rp)
+    relying_party = RelyingParty(parsed_uri.hostname)
+    return Fido2Server(relying_party)
 
 
-def _encode_bytes_to_string(data: Any) -> string:
+def _encode_bytes_to_string(data: Any) -> str:
     """Encode bytes to UTF-8 string with CBOR and BASE64."""
     from fido2 import cbor
 
@@ -63,7 +60,7 @@ def _encode_bytes_to_string(data: Any) -> string:
     return encoded.decode("utf-8")
 
 
-def _decode_string_to_bytes(data: str) -> Any:
+def _decode_string_to_bytes(data: str) -> Dict[str, Any]:
     """Decode UTF-8 string to bytes from CBOR and BASE64."""
     from fido2 import cbor
 
@@ -109,7 +106,7 @@ def _decode_credentials(credentials: list) -> list:
 
 def _encode_credentials(credentials: list) -> list:
     """Create encoded credentials for saving."""
-    return list(map(lambda item: _encode_bytes_to_string(item), credentials))
+    return list(map(_encode_bytes_to_string, credentials))
 
 
 @MULTI_FACTOR_AUTH_MODULES.register("webauthn")
@@ -255,7 +252,7 @@ class WebAuthnSetupFlow(SetupFlow):
         self._auth_module = auth_module  # type: WebAuthnAuthModule
         self._user = user  # type: User
         self._server = _create_server(auth_module.hass)
-        self._state = None  # type: dict
+        self._state = None
         self._credentials = credentials  # type: list
         self._invalid_mfa_times = 0  # type: int
 
@@ -264,8 +261,8 @@ class WebAuthnSetupFlow(SetupFlow):
     ) -> dict[str, Any]:
         """Handle steps of setup flow."""
         errors = {}  # type: dict[str, str]
-        user_error = None  # type: str
-        token = None  # type: str
+        user_error = None
+        token = None
 
         if user_input:
             user_error = user_input.get(INPUT_FIELD_ERROR)
@@ -309,7 +306,9 @@ class WebAuthnSetupFlow(SetupFlow):
         )
 
         self._state = state
-        data = {"options": _encode_bytes_to_string(registration_data)}
+        data = {
+            "options": _encode_bytes_to_string(registration_data)
+        }  # type: Dict[str, str]
 
         return self.async_show_form(
             step_id="init",
