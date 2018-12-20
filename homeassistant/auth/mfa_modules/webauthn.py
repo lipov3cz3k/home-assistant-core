@@ -195,19 +195,29 @@ class WebAuthnAuthModule(MultiFactorAuthModule):
         """Return True if validation passed."""
         await self._async_load()
         return await self.hass.async_add_executor_job(
-            self._validate_webauthn, user_input.get(INPUT_FIELD_TOKEN, "")
+            self._validate_webauthn, user_id, user_input.get(INPUT_FIELD_TOKEN, "")
         )
 
-    def _validate_webauthn(self, token: str) -> bool:
+    def _validate_webauthn(self, user_id: str, token: str) -> bool:
         """Validate token."""
         if not token:
             return False
 
+        credentials_encoded = self._users.get(user_id, None)
+        if credentials_encoded is None:
+            return False
+
         credential_id, client_data, auth_data, signature = _get_validate_data(token)
+        credentials = _decode_credentials(credentials_encoded)
 
         try:
             self._server.authenticate_complete(
-                self._state, credential_id, client_data, auth_data, signature
+                self._state,
+                credentials,
+                credential_id,
+                client_data,
+                auth_data,
+                signature,
             )
             return True
         except Exception:  # pylint: disable=broad-except
