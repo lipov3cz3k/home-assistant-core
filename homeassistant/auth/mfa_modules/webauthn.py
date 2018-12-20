@@ -18,7 +18,8 @@ from . import (
     SetupFlow,
 )
 
-# TODO: Update version after release (and in requirements_all.txt and requirements_test_all.txt)
+# TODO: Update version after release
+# (and in requirements_all.txt and requirements_test_all.txt)
 # TODO: Tests
 # TODO: Проверить что работает при смене домена
 # REQUIREMENTS = ['fido2==0.4.0']
