@@ -217,7 +217,7 @@ class WebAuthnAuthModule(MultiFactorAuthModule):
             return False
 
     async def async_get_login_mfa_additional_data(self, user_id: str) -> dict:
-        """Setup additional data for client."""
+        """Set additional data for client."""
         await self._async_load()
 
         credentials_encoded = self._users.get(user_id, None)
