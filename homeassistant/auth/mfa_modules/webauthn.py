@@ -17,12 +17,7 @@ from . import (
     SetupFlow,
 )
 
-# TODO: Update version after release
-# (and in requirements_all.txt and requirements_test_all.txt)
-# REQUIREMENTS = ['fido2==0.4.0']
-REQUIREMENTS = [
-    "https://github.com/Yubico/python-fido2/archive/master.zip#fido2==0.4.1"
-]
+REQUIREMENTS = ["fido2==0.5.0"]
 
 CONFIG_SCHEMA = MULTI_FACTOR_AUTH_MODULE_SCHEMA.extend({}, extra=vol.PREVENT_EXTRA)
 
@@ -60,7 +55,7 @@ def _encode_bytes_to_string(data: Any) -> str:
     return encoded.decode("utf-8")
 
 
-def _decode_string_to_bytes(data: str) -> Dict[str, Any]:
+def _decode_string_to_bytes(data: str) -> dict[str, Any]:
     """Decode UTF-8 string to bytes from CBOR and BASE64."""
     from fido2 import cbor
 
@@ -308,7 +303,7 @@ class WebAuthnSetupFlow(SetupFlow):
         self._state = state
         data = {
             "options": _encode_bytes_to_string(registration_data)
-        }  # type: Dict[str, str]
+        }  # type: dict[str, str]
 
         return self.async_show_form(
             step_id="init",
