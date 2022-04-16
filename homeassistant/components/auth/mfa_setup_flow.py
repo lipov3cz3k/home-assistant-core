@@ -12,6 +12,8 @@ from homeassistant.components import websocket_api
 from homeassistant.core import HomeAssistant, callback
 import homeassistant.helpers.config_validation as cv
 
+from ...auth.frontend_form_components import frontend_field_schema_serializer
+
 WS_TYPE_SETUP_MFA = "auth/setup_mfa"
 SCHEMA_WS_SETUP_MFA = vol.All(
     websocket_api.BASE_COMMAND_MESSAGE_SCHEMA.extend(
@@ -157,6 +159,8 @@ def _prepare_result_json(
     if (schema := data["data_schema"]) is None:
         data["data_schema"] = []
     else:
-        data["data_schema"] = voluptuous_serialize.convert(schema)
+        data["data_schema"] = voluptuous_serialize.convert(
+            schema, custom_serializer=frontend_field_schema_serializer
+        )
 
     return data

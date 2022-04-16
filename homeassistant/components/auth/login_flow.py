@@ -92,6 +92,7 @@ from homeassistant.components.http.view import HomeAssistantView
 from homeassistant.core import HomeAssistant
 
 from . import indieauth
+from ...auth.frontend_form_components import frontend_field_schema_serializer
 
 if TYPE_CHECKING:
     from . import StoreResultType
@@ -170,7 +171,9 @@ def _prepare_result_json(
     if (schema := data["data_schema"]) is None:
         data["data_schema"] = []
     else:
-        data["data_schema"] = voluptuous_serialize.convert(schema)
+        data["data_schema"] = voluptuous_serialize.convert(
+            schema, custom_serializer=frontend_field_schema_serializer
+        )
 
     return data
 
