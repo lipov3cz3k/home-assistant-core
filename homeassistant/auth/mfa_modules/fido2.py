@@ -220,7 +220,9 @@ class Fido2AuthModule(MultiFactorAuthModule):
     def __init__(self, hass: HomeAssistant, config: dict[str, Any]) -> None:
         """Initialize the user data store."""
         super().__init__(hass, config)
-        self._server = Fido2Wrapper(hass, config["origin"], config["check_origin"])
+        self._server = Fido2Wrapper(
+            hass, config.get("origin"), config.get("check_origin")
+        )
         self._users: dict[str, str] | None = None
         self._user_store = hass.helpers.storage.Store(
             STORAGE_VERSION, STORAGE_KEY, private=True, atomic_writes=True
