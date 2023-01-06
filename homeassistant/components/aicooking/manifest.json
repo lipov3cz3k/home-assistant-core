@@ -1,0 +1,17 @@
+{
+  "domain": "aicooking",
+  "name": "Aicooking",
+  "config_flow": true,
+  "documentation": "https://www.home-assistant.io/integrations/aicooking",
+  "requirements": ["aicooking-ble==0.1.1"],
+  "bluetooth": [
+    {
+      "local_name": "BBQ",
+      "connectable": false,
+      "service_uuid": "0000180a-0000-1000-8000-00805f9b34fb"
+    }
+  ],
+  "dependencies": ["bluetooth"],
+  "codeowners": ["@lipov3cz3k"],
+  "iot_class": "local_push"
+}

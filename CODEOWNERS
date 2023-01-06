@@ -39,6 +39,8 @@ build.json @home-assistant/supervisor
 /tests/components/aemet/ @Noltari
 /homeassistant/components/agent_dvr/ @ispysoftware
 /tests/components/agent_dvr/ @ispysoftware
+/homeassistant/components/aicooking/ @lipov3cz3k
+/tests/components/aicooking/ @lipov3cz3k
 /homeassistant/components/air_quality/ @home-assistant/core
 /tests/components/air_quality/ @home-assistant/core
 /homeassistant/components/airly/ @bieniu
