@@ -1,4 +1,35 @@
 """Constants for the Xiaomi Miio component."""
+from miio.integrations.airpurifier.dmaker.airfresh_t2017 import (
+    MODEL_AIRFRESH_A1,
+    MODEL_AIRFRESH_T2017,
+)
+from miio.integrations.airpurifier.zhimi.airfresh import (
+    MODEL_AIRFRESH_VA2,
+    MODEL_AIRFRESH_VA4,
+)
+from miio.integrations.fan.dmaker.fan import (
+    MODEL_FAN_P5,
+)
+from miio.integrations.fan.dmaker.fan_miot import (
+    # MODEL_FAN_P33,
+    MODEL_FAN_1C,
+    MODEL_FAN_P9,
+    MODEL_FAN_P10,
+    MODEL_FAN_P11,
+    # MODEL_FAN_P15,
+    MODEL_FAN_P18,
+)
+from miio.integrations.fan.zhimi.fan import (
+    MODEL_FAN_SA1,
+    MODEL_FAN_V2,
+    MODEL_FAN_V3,
+    MODEL_FAN_ZA1,
+    MODEL_FAN_ZA3,
+    MODEL_FAN_ZA4,
+)
+from miio.integrations.fan.zhimi.zhimi_miot import (
+    MODEL_FAN_ZA5,
+)
 from miio.integrations.vacuum.roborock.vacuum import (
     ROCKROBO_E2,
     ROCKROBO_S4,
@@ -84,25 +115,6 @@ MODEL_AIRHUMIDIFIER_CB1 = "zhimi.humidifier.cb1"
 MODEL_AIRHUMIDIFIER_JSQ = "deerma.humidifier.jsq"
 MODEL_AIRHUMIDIFIER_JSQ1 = "deerma.humidifier.jsq1"
 MODEL_AIRHUMIDIFIER_MJJSQ = "deerma.humidifier.mjjsq"
-
-MODEL_AIRFRESH_A1 = "dmaker.airfresh.a1"
-MODEL_AIRFRESH_VA2 = "zhimi.airfresh.va2"
-MODEL_AIRFRESH_VA4 = "zhimi.airfresh.va4"
-MODEL_AIRFRESH_T2017 = "dmaker.airfresh.t2017"
-
-MODEL_FAN_1C = "dmaker.fan.1c"
-MODEL_FAN_P10 = "dmaker.fan.p10"
-MODEL_FAN_P11 = "dmaker.fan.p11"
-MODEL_FAN_P18 = "dmaker.fan.p18"
-MODEL_FAN_P5 = "dmaker.fan.p5"
-MODEL_FAN_P9 = "dmaker.fan.p9"
-MODEL_FAN_SA1 = "zhimi.fan.sa1"
-MODEL_FAN_V2 = "zhimi.fan.v2"
-MODEL_FAN_V3 = "zhimi.fan.v3"
-MODEL_FAN_ZA1 = "zhimi.fan.za1"
-MODEL_FAN_ZA3 = "zhimi.fan.za3"
-MODEL_FAN_ZA4 = "zhimi.fan.za4"
-MODEL_FAN_ZA5 = "zhimi.fan.za5"
 
 MODELS_FAN_MIIO = [
     MODEL_FAN_P5,
